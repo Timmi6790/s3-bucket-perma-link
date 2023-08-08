@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/Timmi6790/s3-bucket-perma-link/compare/0.1.0...0.2.0) (2023-08-08)
+
+
+### Features
+
+* bump version to 0.1.1 ([52b3bb3](https://github.com/Timmi6790/s3-bucket-perma-link/commit/52b3bb339a4824cc1edf361503243645ae66a3b6))
+* bump version to 0.1.1 ([82f3912](https://github.com/Timmi6790/s3-bucket-perma-link/commit/82f3912fb5dfdf6cf1f0f882d89e24243e69547e))
+
 ## 0.1.0 (2023-08-08)
 
 
