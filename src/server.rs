@@ -1,5 +1,5 @@
-use crate::data::WebHookData;
-use crate::routes::{health_check, redirect};
+use crate::data::DownloadData;
+use crate::routes::{download, health_check};
 use crate::Result;
 use actix_web::{web, App, HttpServer};
 use derive_new::new;
@@ -12,21 +12,16 @@ pub struct Server {
 }
 
 impl Server {
-    pub async fn run_until_stopped(&self, web_hook_data: WebHookData) -> Result<()> {
-        info!(
-            "Starting server on {}:{} with allowed paths {:#?}",
-            self.host,
-            self.port,
-            web_hook_data.allowed_paths().allowed_paths()
-        );
+    pub async fn run_until_stopped(&self, download_data: DownloadData) -> Result<()> {
+        info!("Starting server on {}:{}", self.host, self.port,);
 
-        let web_hook_data = web::Data::new(web_hook_data);
+        let download_data = web::Data::new(download_data);
         let server = HttpServer::new(move || {
             App::new()
                 .wrap(TracingLogger::default())
-                .app_data(web_hook_data.clone())
+                .app_data(download_data.clone())
                 .configure(health_check::get_config)
-                .configure(redirect::get_config)
+                .configure(download::get_config)
         })
         .bind((self.host.clone(), self.port))?;
 

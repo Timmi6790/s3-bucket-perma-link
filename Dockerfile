@@ -35,7 +35,7 @@ COPY --from=env /etc/group /etc/group
 COPY --from=env /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 WORKDIR /app
-COPY --from=builder --chown=root:root /app/target/x86_64-unknown-linux-musl/release/cloudflare-access-webhook-redirect ./app
+COPY --from=builder --chown=root:root /app/target/x86_64-unknown-linux-musl/release/s3_bucket_perma_link ./app
 
 USER 1000:1000
 

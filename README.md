@@ -1,61 +1,49 @@
 <br/>
 <p align="center">
-  <h3 align="center">Cloudflare Access Webhook Redirect</h3>
+  <h3 align="center">S3 Bucket Permanent Permanent Link</h3>
 
   <p align="center">
-    <a href="https://github.com/Timmi6790/cloudflare-access-webhook-redirect/issues">Report Bug</a>
+    <a href="https://github.com/Timmi6790/s3-bucket-perma-link/issues">Report Bug</a>
     .
-    <a href="https://github.com/Timmi6790/cloudflare-access-webhook-redirect/issues">Request Feature</a>
+    <a href="https://github.com/Timmi6790/s3-bucket-perma-link/issues">Request Feature</a>
   </p>
 </p>
 
 <div align="center">
 
-![Docker Image Version (latest semver)](https://img.shields.io/docker/v/timmi6790/cloudflare-access-webhook-redirect)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Timmi6790/cloudflare-access-webhook-redirect/build.yml)
-![Issues](https://img.shields.io/github/issues/Timmi6790/cloudflare-access-webhook-redirect)
-[![codecov](https://codecov.io/gh/Timmi6790/cloudflare-access-webhook-redirect/branch/master/graph/badge.svg?token=dDUZjsYmh2)](https://codecov.io/gh/Timmi6790/cloudflare-access-webhook-redirect)
-![License](https://img.shields.io/github/license/Timmi6790/cloudflare-access-webhook-redirect)
-[![wakatime](https://wakatime.com/badge/github/Timmi6790/cloudflare-access-webhook-redirect.svg)](https://wakatime.com/badge/github/Timmi6790/cloudflare-access-webhook-redirect)
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/timmi6790/s3-bucket-perma-link)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Timmi6790/s3-bucket-perma-link/build.yml)
+![Issues](https://img.shields.io/github/issues/Timmi6790/s3-bucket-perma-link)
+[![codecov](https://codecov.io/gh/Timmi6790/s3-bucket-perma-link/branch/master/graph/badge.svg?token=dDUZjsYmh2)](https://codecov.io/gh/Timmi6790/s3-bucket-perma-link)
+![License](https://img.shields.io/github/license/Timmi6790/s3-bucket-perma-link)
+[![wakatime](https://wakatime.com/badge/github/Timmi6790/s3-bucket-perma-link.svg)](https://wakatime.com/badge/github/Timmi6790/s3-bucket-perma-link)
 
 </div>
 
 ## About The Project
 
-Forward path and method specific requests through a cloudflare access protected endpoint.
-
-## Features
-| Implemented        | Feature                                      |
-|--------------------|----------------------------------------------|
-| :heavy_check_mark: | GET, POST, PUT, PATCH, DELETE method support |
-| :heavy_check_mark: | Path specific forwarding                     |
-| :heavy_check_mark: | Regex Path support                           |
-| :heavy_check_mark: | Parameter support                            |
-| :heavy_check_mark: | Return body                                  |
-| :heavy_check_mark: | Return status code                           |
-|                    | Return headers                               |
-
-
+A simple web server to allow pre-defined urls to always access specific S3 bucket resources.
 
 ### Installation - Helm chart
 
-- [Helm chart](https://github.com/Timmi6790/helm-charts/tree/main/charts/cloudflare-access-webhook-redirect)
+- [Helm chart](https://github.com/Timmi6790/helm-charts/tree/main/charts/s3-bucket-perma-link)
 
 
 ### Environment variables
 
-| Environment    	                 | Required 	  | Description                         	                                             | Example                                  |
-|----------------------------------|-------------|-----------------------------------------------------------------------------------|------------------------------------------|
-| CLOUDFLARE.CLIENT_ID     	       | X	          | Cloudflare Access client id                        	                              | e25a2fd93e1049a4bb48d00907d6f4bf.access  |
-| CLOUDFLARE.CLIENT_SECRET       	 | X         	 | Cloudflare Access client secret                     	                             | a5990007b7a54f83b52594a86c4d520e         |
-| WEBHOOK.TARGET_BASE     	        | X	          | Forward target base                            	                                  | test.google.com/api                      |
-| WEBHOOK.PATHS    	               | X	          | Allowed paths as regex with method                          	                     | /test:ALL; /test2:GET; /test\d*:POST,PUT |
-| SERVER.HOST 	                    | 	           | Server host [Default: 0.0.0.0]	                                                   | 0.0.0.0                                  |
-| SERVER.PORT       	              | 	           | Server port [Default: 8080]                           	                           | 9090                                     |
-| SENTRY_DSN     	                 | 	           | Sentry DSN                          	                                             |                                          |
-| LOG_LEVEL  	                     | 	           | Log level [FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL]                         	 | INFO                                     |
+| Environment    	    | Required 	  | Description                         	                                             | Example                                       |
+|---------------------|-------------|-----------------------------------------------------------------------------------|-----------------------------------------------|
+| S3.ACCESS_KEY  	    | X	          | S3 Access key                        	                                            | e25a2fd93e1049a4bb48d00907d6f4bf.access       |
+| S3.SECRET_KEY    	  | X         	 | S3 secret key                     	                                               | a5990007b7a54f83b52594a86c4d520e              |
+| S3.HOST    	        | X	          | S3 host url                            	                                          | s3.amazon.com                                 |
+| S3.REGION   	       | X	          | S3 region                          	                                              | eu-central-1                                  |
+| BUCKET.ENTRIES      | X           | Key to bucket file                                                                | key:bucket,file.txt; key2:bucket2,config.yaml |
+| SERVER.HOST 	       | 	           | Server host [Default: 0.0.0.0]	                                                   | 0.0.0.0                                       |
+| SERVER.PORT       	 | 	           | Server port [Default: 8080]                           	                           | 9090                                          |
+| SENTRY_DSN     	    | 	           | Sentry DSN                          	                                             |                                               |
+| LOG_LEVEL  	        | 	           | Log level [FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL]                         	 | INFO                                          |
 
 ## License
 
-See [LICENSE](https://github.com/Timmi6790/netcup-offer-bot/blob/main/LICENSE.md) for
+See [LICENSE](https://github.com/Timmi6790/s3-bucket-perma-link/blob/main/LICENSE.md) for
 more information.

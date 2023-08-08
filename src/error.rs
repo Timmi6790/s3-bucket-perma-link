@@ -7,14 +7,12 @@ pub enum Error {
     Logger(#[from] tracing::metadata::ParseLevelError),
     #[error("IO error")]
     IoError(#[from] std::io::Error),
-    #[error("Serde error")]
-    Serde(#[from] serde_json::Error),
-    #[error("Regex error")]
-    Regex(#[from] regex::Error),
     #[error("Invalid route")]
     InvalidRoute(String),
     #[error("Config error")]
     Config(#[from] config::ConfigError),
+    #[error("Bukkit error")]
+    Minio(#[from] minio_rsc::errors::ValueError),
     #[error("{0}")]
     Custom(String),
 }

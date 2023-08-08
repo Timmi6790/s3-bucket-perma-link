@@ -42,7 +42,7 @@ jobs:
         uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175
         if: ${{ steps.release.outputs.release_created }}
         with:
-          images: timmi6790/cloudflare-access-webhook-redirect
+          images: timmi6790/s3-bucket-perma-link
           tags: |
             type=raw,value=${{ steps.release.outputs.tag_name }}
             type=raw,value=latest

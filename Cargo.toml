@@ -1,8 +1,36 @@
 [package]
-name = "s3-bucket-access"
+name = "s3_bucket_perma_link"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "s3_bucket_perma_link"
 
 [dependencies]
+getset = "0.1.2"
+derive-new = "0.5.9"
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1.14"
+tracing = "0.1.37"
+tracing-subscriber = "0.3.17"
+anyhow = { version = "1.0.71", features = ["backtrace"] }
+thiserror = "1.0"
+backtrace = "0.3.67"
+actix-web = "4.3.1"
+tracing-actix-web = "0.7.5"
+config = "0.13.3"
+serde = "1.0.164"
+serde_json = "1.0.97"
+minio-rsc = "0.1.5"
+sentry = { version = "0.31.5", features = ["anyhow", "debug-images", "backtrace"] }
+secrecy = { version = "0.8.0", features = ["serde"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+debug = true
