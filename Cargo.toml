@@ -18,18 +18,18 @@ tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1.14"
 tracing = "0.1.37"
 tracing-subscriber = "0.3.17"
-anyhow = { version = "1.0.72", features = ["backtrace"] }
+anyhow = { version = "1.0.75", features = ["backtrace"] }
 thiserror = "1.0"
-backtrace = "0.3.68"
-actix-web = "4.3.1"
+backtrace = "0.3.69"
+actix-web = "4.4.0"
 tracing-actix-web = "0.7.6"
 config = "0.13.3"
-serde = "1.0.183"
-serde_json = "1.0.104"
-minio-rsc = "0.1.5"
-sentry = { version = "0.31.5", features = ["anyhow", "debug-images", "backtrace"] }
+serde = "1.0.188"
+serde_json = "1.0.106"
+minio-rsc = "0.1.7"
+sentry = { version = "0.31.6", features = ["anyhow", "debug-images", "backtrace"] }
 secrecy = { version = "0.8.0", features = ["serde"] }
-time = "0.3.25"
+time = "0.3.28"
 
 [profile.release]
 lto = true
