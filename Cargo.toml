@@ -25,7 +25,7 @@ actix-web = "4.4.0"
 tracing-actix-web = "0.7.6"
 config = "0.13.3"
 serde = "1.0.188"
-serde_json = "1.0.106"
+serde_json = "1.0.107"
 minio-rsc = "0.1.7"
 sentry = { version = "0.31.6", features = ["anyhow", "debug-images", "backtrace"] }
 secrecy = { version = "0.8.0", features = ["serde"] }
