@@ -27,7 +27,7 @@ config = "0.13.3"
 serde = "1.0.188"
 serde_json = "1.0.107"
 minio-rsc = "0.1.7"
-sentry = { version = "0.31.6", features = ["anyhow", "debug-images", "backtrace"] }
+sentry = { version = "0.31.7", features = ["anyhow", "debug-images", "backtrace"] }
 secrecy = { version = "0.8.0", features = ["serde"] }
 time = "0.3.28"
 
