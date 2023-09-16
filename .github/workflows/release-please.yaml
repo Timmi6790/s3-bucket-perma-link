@@ -39,7 +39,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@2bcfca25d5715d1dffe55c58e93f5d02defd5feb
+        uses: docker/metadata-action@879dcbb708d40f8b8679d4f7941b938a086e23a7
         if: ${{ steps.release.outputs.release_created }}
         with:
           images: timmi6790/s3-bucket-perma-link
