@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/Timmi6790/s3-bucket-perma-link/compare/0.2.0...0.2.1) (2023-09-16)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([a15405b](https://github.com/Timmi6790/s3-bucket-perma-link/commit/a15405bd7462aeb4118598275b41882573929681))
+* **deps:** update rust crate sentry to 0.31.7 ([92750da](https://github.com/Timmi6790/s3-bucket-perma-link/commit/92750dad0bbc00fe4a51972213943de1e5321536))
+* **deps:** update rust crate serde_json to 1.0.107 ([bbb6723](https://github.com/Timmi6790/s3-bucket-perma-link/commit/bbb672347e7e7770aeede035a16463a1871cc3e8))
+
 ## [0.2.0](https://github.com/Timmi6790/s3-bucket-perma-link/compare/0.1.0...0.2.0) (2023-08-08)
 
 
