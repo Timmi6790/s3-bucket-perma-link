@@ -74,7 +74,7 @@ impl S3Config {
             self.host, self.region
         );
         let minio = Minio::builder()
-            .host(self.host.clone())
+            .endpoint(self.host.clone())
             .region(self.region.clone())
             .provider(provider)
             .secure(true)

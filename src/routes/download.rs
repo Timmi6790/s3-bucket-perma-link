@@ -1,7 +1,5 @@
 use crate::data::DownloadData;
 use actix_web::{web, HttpResponse};
-use minio_rsc::types::args::ObjectArgs;
-
 pub fn get_config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::resource("{tail:.*}").route(web::get().to(download)));
 }
@@ -17,10 +15,7 @@ async fn download(
             info!("Valid path request!");
 
             let minio = download_data.s3();
-            match minio
-                .get_object(ObjectArgs::new(bucket.bucket(), bucket.file()))
-                .await
-            {
+            match minio.get_object(bucket.bucket(), bucket.file()).await {
                 Ok(file) => Ok(HttpResponse::Ok().streaming(file.bytes_stream())),
                 Err(e) => {
                     error!("Failed to download file from bucket {}", e);
