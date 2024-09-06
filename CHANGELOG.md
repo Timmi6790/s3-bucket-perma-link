@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/Timmi6790/s3-bucket-perma-link/compare/0.2.1...v0.2.2) (2024-09-06)
+
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([948f937](https://github.com/Timmi6790/s3-bucket-perma-link/commit/948f93771bc36dc515132d6f66aa2fa43e298352))
+
 ## [0.2.1](https://github.com/Timmi6790/s3-bucket-perma-link/compare/0.2.0...0.2.1) (2023-09-16)
 
 
