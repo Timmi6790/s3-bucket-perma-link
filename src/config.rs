@@ -51,6 +51,13 @@ const DEFAULT_LOG_LEVEL: &str = "info";
 // Not rustdoc: where these `///` lines are rendered is above, for whoever reads the reference.
 // This is for whoever adds a field. `Getters` copies the `///` onto the getter it generates, so
 // leaving one off fails `missing_docs` on a span pointing at the derive, never at the field.
+//
+// `deny_unknown_fields` closes the root: a key that no field here spells is a boot failure
+// rather than a value an operator believes they set. The four blocks below close themselves the
+// same way — it shuts one level and no other — and none of them is flattened into or flattens
+// another, which is the one shape serde refuses to combine it with. The map under
+// `bucket.entries` stays open regardless, because its keys are route names an operator chooses.
+#[serde(deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct Config {
     /// Where the service listens. Omit the block for `0.0.0.0:8080`.
@@ -88,6 +95,7 @@ impl Default for Config {
 
 /// Where the object store lives and how to authenticate against it.
 #[derive(Debug, Deserialize, Serialize, Default, Getters, Describe)]
+#[serde(deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct S3Config {
     /// S3 access key. Mount it rather than setting it in a file that is committed.
@@ -111,6 +119,7 @@ pub struct S3Config {
 
 /// The listener the service binds.
 #[derive(Debug, Deserialize, Serialize, Getters, Describe)]
+#[serde(deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct ServerConfig {
     /// Address to listen on. `0.0.0.0` in a container, which is the deployment this ships as.
@@ -123,6 +132,7 @@ pub struct ServerConfig {
 
 /// The routes the service serves, and the object each one resolves to.
 #[derive(Debug, Deserialize, Serialize, Default, Getters, Describe)]
+#[serde(deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct BucketConfig {
     /// One `[bucket.entries.<request path>]` block per permanent link, each carrying a `bucket`
@@ -141,6 +151,10 @@ pub struct BucketConfig {
 
 /// One route's object.
 #[derive(Debug, Clone, Deserialize, Serialize, Getters, Describe)]
+// The element type `bucket.entries` publishes, so this is the one closure a schema consumer can
+// see directly: without it the block renders as an open object and `objekt = "…"` passes every
+// validator, then serves 500s from a route whose object key is empty.
+#[serde(deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct BucketEntry {
     /// The bucket [`Self::object`] lives in.
@@ -158,6 +172,11 @@ pub struct BucketEntry {
 /// Both are installed once, before the reload supervisor is reached, and cannot be reinstalled
 /// on a running process — so this is the one block a configuration reload does not apply.
 #[derive(Debug, Deserialize, Serialize, Getters, Describe)]
+// Closed like the rest, with one consequence worth knowing: `sentry` is a field only under the
+// `sentry` feature, so a build without it now refuses a file carrying `telemetry.sentry.*`
+// rather than parsing and ignoring it. That is the behaviour the feature's note in `Cargo.toml`
+// and the README already claim, applied to the TOML layer as well as to the environment one.
+#[serde(deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct TelemetryConfig {
     /// How much the service says: `trace`, `debug`, `info`, `warn` or `error`.
@@ -165,7 +184,13 @@ pub struct TelemetryConfig {
     /// The console sink only. What Sentry takes is `telemetry.sentry.capture_level` and
     /// `telemetry.sentry.breadcrumb_level`, which are filtered independently.
     ///
-    /// Parsed by [`Self::level`].
+    /// Matched without regard to case, so `INFO` is the same as `info`. A file may also carry
+    /// `"1"` to `"5"`, which name the five levels counting up from `error`; an environment
+    /// variable may not, because its text is read as a number before this key sees it. Write
+    /// one of the five names and none of that applies.
+    ///
+    /// Parsed by [`Self::level`], which is also where the schema's silence about this key is
+    /// explained.
     #[serde(default = "TelemetryConfig::default_log_level")]
     log_level: String,
     /// Sentry error reporting and distributed tracing. Off unless
@@ -320,6 +345,21 @@ impl TelemetryConfig {
 
     /// The configured level.
     ///
+    /// `tracing`'s own parser rather than `serde`'s, which is why [`Self::log_level`] is a
+    /// `String` that publishes `{"type": "string"}` and no list of values. The set it accepts is
+    /// not a fixed list of spellings: it folds ASCII case, and it takes any text `usize` parses
+    /// as `1` to `5`, so `INFO`, `Warn` and — in a document, where the text is not read as a
+    /// number on the way in — `"3"` and `"+003"` all boot. Publishing the five lowercase names
+    /// would therefore publish a schema that rejects configurations this service starts on,
+    /// which is the one thing the contract may never do.
+    ///
+    /// A hand-written `Describe` cannot say it either, so this is documentation rather than an
+    /// omission waiting to be fixed: a `terrace_config::schema::Leaf` narrows a key with a type
+    /// spelling, a fixed set of values or numeric bounds, and a case-insensitive alternation is
+    /// none of the three. `terrace-config` makes the same call for a `Url` — describe what is
+    /// true, or say nothing, but never guess. `the_log_level_publishes_no_list_of_values` pins
+    /// both halves of that.
+    ///
     /// # Errors
     /// Returns [`Error::Logger`] if [`Self::log_level`] does not name a level.
     pub fn level(&self) -> crate::Result<Level> {
@@ -382,7 +422,7 @@ impl S3Config {
 
 #[cfg(test)]
 mod tests {
-    use super::{app, contract};
+    use super::{app, contract, schema};
     use std::collections::BTreeMap;
     use terrace_config::schema::{DEFAULT_PATH, LABEL_PATH, LABEL_PREFIX, LABEL_VERSION};
 
@@ -395,6 +435,32 @@ mod tests {
     #[test]
     fn the_contract_assembles() {
         contract(app()).expect("the declared external surface is one a validator can act on");
+    }
+
+    /// `telemetry.log_level` publishes its type and nothing else, and must not grow a list of
+    /// values.
+    ///
+    /// The list every reader reaches for — the five names the `///` comment prints — is one this
+    /// crate cannot honestly make, because the accepted set is decided by `tracing`'s parser
+    /// rather than by `serde`, and that parser folds case and reads `1` to `5`.
+    /// `loader::tests::the_log_level_takes_more_than_the_five_names` boots the service on
+    /// `INFO`, `Info`, `3` and `+003` to prove it; this pins the consequence, so an annotation
+    /// added later fails here instead of failing in an operator's cluster.
+    #[test]
+    fn the_log_level_publishes_no_list_of_values() {
+        let schema = schema().expect("the schema builds");
+        let log_level = schema
+            .keys
+            .iter()
+            .find(|key| key.path == "telemetry.log_level")
+            .expect("the key is described rather than skipped");
+
+        assert_eq!(log_level.ty.as_deref(), Some("String"));
+        assert!(
+            log_level.values.is_empty(),
+            "a value list here refuses spellings the service boots on: {:?}",
+            log_level.values
+        );
     }
 
     /// The labels the Dockerfile carries name *this* loader.
