@@ -106,7 +106,7 @@ secrecy = { version = "0.10.3", features = ["serde"] }
 #           it, and release LTO drops it.
 #   explain which layer supplied each key, logged once per generation in `main` — the answer to
 #           "the mounted secret is not being picked up" without attaching a debugger.
-terrace-config = { git = "https://github.com/TimSchoenle/terrace-config", tag = "v0.10.0", default-features = false, features = ["full"] }
+terrace-config = { git = "https://github.com/TimSchoenle/terrace-config", tag = "v0.11.0", default-features = false, features = ["full"] }
 # `CancellationToken`, the shutdown/reload signal the supervisor and the listener share.
 tokio-util = "0.7.19"
 
@@ -114,7 +114,7 @@ tokio-util = "0.7.19"
 # The same crate again, for its `testing` feature: the sandbox the loader tests arrange their
 # layers in. It is deliberately outside `full`, because a service image has no reason to link a
 # test harness — a dev-dependency on the same tag is how it is meant to be taken.
-terrace-config = { git = "https://github.com/TimSchoenle/terrace-config", tag = "v0.10.0", default-features = false, features = ["testing"] }
+terrace-config = { git = "https://github.com/TimSchoenle/terrace-config", tag = "v0.11.0", default-features = false, features = ["testing"] }
 # `examples/readme-variables.rs` assembles the README template payload. Building it here rather
 # than by hand is what makes the embedded Markdown tables safe: a `|` or a newline inside a
 # generated cell is a JSON escape, not a broken document.

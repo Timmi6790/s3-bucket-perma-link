@@ -79,6 +79,7 @@ mod tests {
     use secrecy::ExposeSecret;
     use terrace_config::explain::{Layer, Origin};
     use terrace_config::testing::{Harness, Jail};
+    use tracing::Level;
 
     /// The sandbox every test below runs in: an empty environment, a temporary working directory,
     /// and *this* crate's loader — so no test can pass against a variable name the service does
@@ -255,6 +256,95 @@ object = "handbook.pdf"
             assert!(
                 error.to_string().to_lowercase().contains("secret_key"),
                 "the error must name the key: {error}"
+            );
+            Ok(())
+        });
+    }
+
+    /// Every configuration struct is `#[serde(deny_unknown_fields)]`, so a key no field spells
+    /// fails the boot instead of being dropped on the floor. The failure mode it removes is the
+    /// quiet one: a typo used to load, take the compiled default, and leave the operator reading
+    /// a value they believe they set.
+    ///
+    /// Spelled against a nested block rather than the root, because that is the level a
+    /// misspelling actually happens at — and it is the same attribute on `BucketEntry` that the
+    /// generated contract publishes as `additionalProperties: false`, which is what a chart
+    /// validating against it enforces one step earlier.
+    #[test]
+    fn an_undeclared_key_is_refused() {
+        harness().run(|jail| {
+            set_credentials(jail);
+            jail.config(
+                r#"
+[bucket.entries.docs]
+bucket = "media"
+objekt = "handbook.pdf"
+"#,
+            )?;
+
+            let error = jail
+                .load::<Config>()
+                .expect_err("an undeclared key must fail the boot");
+            assert!(
+                error.to_string().contains("objekt"),
+                "the error must name the key: {error}"
+            );
+            Ok(())
+        });
+    }
+
+    /// `telemetry.log_level` takes more spellings than the five it names, which is why the
+    /// schema publishes no list of values for it.
+    ///
+    /// The string is deserialised verbatim and handed to `tracing`'s parser, not `serde`'s: it
+    /// folds ASCII case, and it reads anything `usize` parses as `1` to `5` — leading zeros and
+    /// a leading `+` included. Every spelling below is one a document may carry today, so the
+    /// obvious annotation (`values("trace", "debug", "info", "warn", "error")`) would publish a
+    /// schema rejecting a deployment that runs. `config::tests::the_log_level_publishes_no_list_of_values`
+    /// holds the other half: that the key stays unannotated.
+    ///
+    /// Spelled against the document layer because that is the layer a value list would be
+    /// checked against. The environment layer accepts less: its text is TOML-parsed before the
+    /// field sees it, so `…LOG_LEVEL=3` arrives as an integer and is refused for the type it is
+    /// rather than the level it names — which the second half of this test pins, so the day it
+    /// changes is not the day the reference is quietly wrong about it.
+    #[test]
+    fn the_log_level_takes_more_than_the_five_names() {
+        harness().run(|jail| {
+            set_credentials(jail);
+
+            for spelling in ["info", "INFO", "Info", "3", "+003"] {
+                jail.config(format!(
+                    r#"
+[telemetry]
+log_level = "{spelling}"
+
+[bucket.entries.docs]
+bucket = "media"
+object = "handbook.pdf"
+"#
+                ))?;
+
+                let config: Config = jail.load()?;
+                assert_eq!(
+                    config
+                        .telemetry()
+                        .level()
+                        .expect("the parser takes this spelling"),
+                    Level::INFO,
+                    "`{spelling}` names the level `info` names"
+                );
+            }
+
+            // The one place the two layers disagree, and the reason the document is what the
+            // paragraph above is measured against.
+            jail.env_key("telemetry.log_level", 3);
+            let refused = jail
+                .load::<Config>()
+                .expect_err("an integer is not a level the environment layer can carry");
+            assert!(
+                refused.to_string().contains("expected a string"),
+                "the refusal must be about the type, not the level: {refused}"
             );
             Ok(())
         });

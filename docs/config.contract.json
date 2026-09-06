@@ -180,6 +180,7 @@
         "values": [],
         "constraint": {
           "additionalProperties": {
+            "additionalProperties": false,
             "properties": {
               "bucket": {
                 "description": "The bucket [`Self::object`] lives in.",
@@ -219,7 +220,7 @@
         "env": "S3_PERMA_LINK_TELEMETRY__LOG_LEVEL",
         "env_file": "S3_PERMA_LINK_TELEMETRY__LOG_LEVEL_FILE",
         "secrets_file": "telemetry__log_level",
-        "docs": "How much the service says: `trace`, `debug`, `info`, `warn` or `error`.\n\nThe console sink only. What Sentry takes is `telemetry.sentry.capture_level` and\n`telemetry.sentry.breadcrumb_level`, which are filtered independently.\n\nParsed by [`Self::level`].",
+        "docs": "How much the service says: `trace`, `debug`, `info`, `warn` or `error`.\n\nThe console sink only. What Sentry takes is `telemetry.sentry.capture_level` and\n`telemetry.sentry.breadcrumb_level`, which are filtered independently.\n\nMatched without regard to case, so `INFO` is the same as `info`. A file may also carry\n`\"1\"` to `\"5\"`, which name the five levels counting up from `error`; an environment\nvariable may not, because its text is read as a number before this key sees it. Write\none of the five names and none of that applies.\n\nParsed by [`Self::level`], which is also where the schema's silence about this key is\nexplained.",
         "ty": "String",
         "values": [],
         "constraint": {
@@ -365,6 +366,8 @@
         "ty": "f32",
         "values": [],
         "constraint": {
+          "maximum": 1.0,
+          "minimum": 0.0,
           "type": "number"
         },
         "text_form": "unknown",
@@ -388,6 +391,8 @@
         "ty": "f32",
         "values": [],
         "constraint": {
+          "maximum": 1.0,
+          "minimum": 0.0,
           "type": "number"
         },
         "text_form": "unknown",
@@ -409,8 +414,30 @@
         "secrets_file": "telemetry__sentry__capture_level",
         "docs": "Least severe `tracing` level reported as a Sentry **issue**.",
         "ty": "SentryLevel",
-        "values": [],
-        "text_form": "unknown",
+        "values": [
+          "off",
+          "error",
+          "warn",
+          "info",
+          "debug",
+          "trace"
+        ],
+        "constraint": {
+          "enum": [
+            "off",
+            "error",
+            "warn",
+            "info",
+            "debug",
+            "trace"
+          ],
+          "type": "string"
+        },
+        "text_constraint": {
+          "pattern": "^\\s*(off|error|warn|info|debug|trace)\\s*$",
+          "type": "string"
+        },
+        "text_form": "choice",
         "aliases": [],
         "env_aliases": [],
         "env_file_aliases": [],
@@ -429,8 +456,30 @@
         "secrets_file": "telemetry__sentry__breadcrumb_level",
         "docs": "Least severe `tracing` level kept as a **breadcrumb** — the trail attached to the next\nissue. Records at or above `capture_level` become issues instead.\n\nSpelled as a key rather than as a rustdoc link to [`Self::capture_level`]: this first\nparagraph is a cell in the generated README table, where an intra-doc link renders as\nits own source.\n\nIndependent of [`TelemetryConfig::log_level`](super::TelemetryConfig): the two sinks\ncarry their own filters, so tightening the console to `warn` does not silently empty\nevery breadcrumb trail. The cost is symmetric — asking for `debug` breadcrumbs makes the\nprocess evaluate `debug` records it does not print.",
         "ty": "SentryLevel",
-        "values": [],
-        "text_form": "unknown",
+        "values": [
+          "off",
+          "error",
+          "warn",
+          "info",
+          "debug",
+          "trace"
+        ],
+        "constraint": {
+          "enum": [
+            "off",
+            "error",
+            "warn",
+            "info",
+            "debug",
+            "trace"
+          ],
+          "type": "string"
+        },
+        "text_constraint": {
+          "pattern": "^\\s*(off|error|warn|info|debug|trace)\\s*$",
+          "type": "string"
+        },
+        "text_form": "choice",
         "aliases": [],
         "env_aliases": [],
         "env_file_aliases": [],
@@ -714,7 +763,7 @@
         "properties": {
           "log_level": {
             "default": "info",
-            "description": "How much the service says: `trace`, `debug`, `info`, `warn` or `error`.\n\nThe console sink only. What Sentry takes is `telemetry.sentry.capture_level` and\n`telemetry.sentry.breadcrumb_level`, which are filtered independently.\n\nParsed by [`Self::level`].",
+            "description": "How much the service says: `trace`, `debug`, `info`, `warn` or `error`.\n\nThe console sink only. What Sentry takes is `telemetry.sentry.capture_level` and\n`telemetry.sentry.breadcrumb_level`, which are filtered independently.\n\nMatched without regard to case, so `INFO` is the same as `info`. A file may also carry\n`\"1\"` to `\"5\"`, which name the five levels counting up from `error`; an environment\nvariable may not, because its text is read as a number before this key sees it. Write\none of the five names and none of that applies.\n\nParsed by [`Self::level`], which is also where the schema's silence about this key is\nexplained.",
             "type": "string"
           },
           "sentry": {
@@ -727,11 +776,29 @@
               },
               "breadcrumb_level": {
                 "default": "info",
-                "description": "Least severe `tracing` level kept as a **breadcrumb** — the trail attached to the next\nissue. Records at or above `capture_level` become issues instead.\n\nSpelled as a key rather than as a rustdoc link to [`Self::capture_level`]: this first\nparagraph is a cell in the generated README table, where an intra-doc link renders as\nits own source.\n\nIndependent of [`TelemetryConfig::log_level`](super::TelemetryConfig): the two sinks\ncarry their own filters, so tightening the console to `warn` does not silently empty\nevery breadcrumb trail. The cost is symmetric — asking for `debug` breadcrumbs makes the\nprocess evaluate `debug` records it does not print."
+                "description": "Least severe `tracing` level kept as a **breadcrumb** — the trail attached to the next\nissue. Records at or above `capture_level` become issues instead.\n\nSpelled as a key rather than as a rustdoc link to [`Self::capture_level`]: this first\nparagraph is a cell in the generated README table, where an intra-doc link renders as\nits own source.\n\nIndependent of [`TelemetryConfig::log_level`](super::TelemetryConfig): the two sinks\ncarry their own filters, so tightening the console to `warn` does not silently empty\nevery breadcrumb trail. The cost is symmetric — asking for `debug` breadcrumbs makes the\nprocess evaluate `debug` records it does not print.",
+                "enum": [
+                  "off",
+                  "error",
+                  "warn",
+                  "info",
+                  "debug",
+                  "trace"
+                ],
+                "type": "string"
               },
               "capture_level": {
                 "default": "error",
-                "description": "Least severe `tracing` level reported as a Sentry **issue**."
+                "description": "Least severe `tracing` level reported as a Sentry **issue**.",
+                "enum": [
+                  "off",
+                  "error",
+                  "warn",
+                  "info",
+                  "debug",
+                  "trace"
+                ],
+                "type": "string"
               },
               "debug": {
                 "default": false,
@@ -770,6 +837,8 @@
               "sample_rate": {
                 "default": 1.0,
                 "description": "Fraction of captured events actually sent, `0.0`–`1.0`.\n\nA blunt volume cap: it drops whole issues rather than repetitions of one, so a rare\nerror is exactly what it loses. Leave it at `1.0` unless quota forces otherwise.",
+                "maximum": 1.0,
+                "minimum": 0.0,
                 "type": "number"
               },
               "send_default_pii": {
@@ -795,6 +864,8 @@
               "traces_sample_rate": {
                 "default": 0.0,
                 "description": "Fraction of traces this service **starts** that are recorded, `0.0`–`1.0`.\n\n`0.0` — the default — means it starts none of its own, which is the sensible setting for\na service whose whole job is one redirect: performance data on it is a cost with no\nquestion behind it. It does not remove this service from a trace that reaches it already\nsampled: an inbound `sentry-trace` header is continued regardless, so a caller that does\ntrace still sees the hop.",
+                "maximum": 1.0,
+                "minimum": 0.0,
                 "type": "number"
               }
             },

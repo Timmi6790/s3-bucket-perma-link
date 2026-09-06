@@ -50,6 +50,7 @@ pub enum SentryLevel {
     reason = "each bool is a configuration key an operator writes and the contract schema               reads by name; the enum the lint asks for would rename all six"
 )]
 #[derive(Debug, Deserialize, Serialize, Getters, Describe)]
+#[serde(deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct SentryConfig {
     /// Initialise the Sentry client. `false` installs no client, no panic hook, no subscriber
@@ -92,6 +93,10 @@ pub struct SentryConfig {
     ///
     /// A blunt volume cap: it drops whole issues rather than repetitions of one, so a rare
     /// error is exactly what it loses. Leave it at `1.0` unless quota forces otherwise.
+    // The interval is not decoration: `telemetry::sentry::check_rate` refuses a value outside
+    // `0.0..=1.0` at boot, so a schema saying so rejects exactly the files the loader rejects.
+    // Float literals because the field is an `f32` — `min = 0` would publish the integer `0`.
+    #[config(range(min = 0.0, max = 1.0))]
     #[serde(default = "SentryConfig::default_sample_rate")]
     sample_rate: f32,
     /// Fraction of traces this service **starts** that are recorded, `0.0`–`1.0`.
@@ -101,9 +106,14 @@ pub struct SentryConfig {
     /// question behind it. It does not remove this service from a trace that reaches it already
     /// sampled: an inbound `sentry-trace` header is continued regardless, so a caller that does
     /// trace still sees the hop.
+    #[config(range(min = 0.0, max = 1.0))]
     #[serde(default)]
     traces_sample_rate: f32,
     /// Least severe `tracing` level reported as a Sentry **issue**.
+    // `values` rather than a literal list: `SentryLevel` is this crate's own unit-variant enum
+    // deriving `Describe`, and its `Deserialize` is serde's derived one, so the spellings the
+    // schema publishes are read off the type that accepts them and cannot drift from it.
+    #[config(values)]
     #[serde(default)]
     capture_level: SentryLevel,
     /// Least severe `tracing` level kept as a **breadcrumb** — the trail attached to the next
@@ -117,6 +127,7 @@ pub struct SentryConfig {
     /// carry their own filters, so tightening the console to `warn` does not silently empty
     /// every breadcrumb trail. The cost is symmetric — asking for `debug` breadcrumbs makes the
     /// process evaluate `debug` records it does not print.
+    #[config(values)]
     #[serde(default = "SentryConfig::default_breadcrumb_level")]
     breadcrumb_level: SentryLevel,
     /// How many breadcrumbs one event carries.
