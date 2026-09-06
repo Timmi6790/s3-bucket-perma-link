@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.2.0](https://github.com/TimSchoenle/s3-bucket-perma-link/compare/v2.1.0...v2.2.0) (2026-09-06)
+
+
+### Features
+
+* update terrace to 0.11.0 ([#467](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/467)) ([8a192ce](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/8a192ce081b8f12fcb3fb93da656a3e76eebf2e6))
+
+
+### Miscellaneous
+
+* **deps:** update step-security/harden-runner action to v2.21.1 ([#458](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/458)) ([59b91cf](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/59b91cff83593d4278a21addc7619be84b2ce361))
+* **deps:** update timschoenle/actions/.github/workflows/maintenance-auto-approve-renovate.yaml to vworkflows-maintenance-auto-approve-renovate-v1.4.22 ([#459](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/459)) ([be46f0b](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/be46f0bcec0cd725fa1b53e402409be94b0423af))
+* **deps:** update timschoenle/actions/.github/workflows/maintenance-timed-auto-pr-approve.yaml to vworkflows-maintenance-timed-auto-pr-approve-v1.2.34 ([#460](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/460)) ([4d93f72](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/4d93f72d546b85bd419fe87218ff9889e0f1a430))
+* **deps:** update timschoenle/actions/actions/common/commit-changes to vactions-common-commit-changes-v1.4.1 ([#461](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/461)) ([4302436](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/43024366efa5efe462436d092ecfe172ee2c309d))
+* **deps:** update timschoenle/actions/actions/common/readme-variables to vactions-common-readme-variables-v1.1.2 ([#462](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/462)) ([e1bc23b](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/e1bc23b6373066145353efe594bebbb502f6c922))
+* **deps:** update timschoenle/actions/actions/common/render-template to vactions-common-render-template-v1.1.3 ([#463](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/463)) ([2b7e4d9](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/2b7e4d92ddc94d57e557f407ce7c9f80cec84f12))
+* **deps:** update timschoenle/actions/actions/helm/update-chart-version to vactions-helm-update-chart-version-v1.6.6 ([#464](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/464)) ([a66764f](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/a66764f6263857434b8e8556a1fd594d5e7ad721))
+* **deps:** update timschoenle/actions/actions/rust/config-contract to vactions-rust-config-contract-v1.2.1 ([#465](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/465)) ([5c2eb29](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/5c2eb29d93c17c57542fda33624edc53a4d0dba1))
+* **deps:** update timschoenle/actions/actions/rust/coverage-codecov to vactions-rust-coverage-codecov-v1.1.43 ([#466](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/466)) ([c848bc3](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/c848bc340ac18dfafa2c10108f21e0b9f61f523e))
+* **deps:** update zizmorcore/zizmor-action action to v0.6.3 ([#456](https://github.com/TimSchoenle/s3-bucket-perma-link/issues/456)) ([f91d5d5](https://github.com/TimSchoenle/s3-bucket-perma-link/commit/f91d5d596e2a82c82f7a19db77e073505737f815))
+
 ## [2.1.0](https://github.com/TimSchoenle/s3-bucket-perma-link/compare/v2.0.0...v2.1.0) (2026-09-02)
 
 

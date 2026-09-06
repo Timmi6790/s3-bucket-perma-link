@@ -1,6 +1,6 @@
 [package]
 name = "s3_bucket_perma_link"
-version = "2.1.0"
+version = "2.2.0"
 edition = "2024"
 # `readme-variables` reads these two on its way to the README template: the page's one-line
 # description and the licence it names come from here rather than from the GitHub API, so a
