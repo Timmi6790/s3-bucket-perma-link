@@ -101,7 +101,7 @@ jobs:
 
       - name: Commit the configuration contract
         id: contract
-        uses: TimSchoenle/actions/actions/common/commit-changes@c7e430537b061a61687ed9308048fc319c97a59c # tag=actions-common-commit-changes-v1.4.1
+        uses: TimSchoenle/actions/actions/common/commit-changes@30bc73a560c7aac65f449b23378b9fd7782f8d39 # tag=actions-common-commit-changes-v1.5.0
         with:
           # Named rather than left to default to `.`, so nothing else a step left dirty in the
           # workspace can ride along in a commit that claims to be about the contract.
