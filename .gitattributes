@@ -1,11 +1,93 @@
-# The files below are compared byte for byte against the output of a generator that writes LF,
-# so a working copy that checked them out with CRLF would fail the comparison on a developer's
-# machine while passing in CI. `core.autocrlf` is a per-machine setting; this is not.
-#
-#   docs/config.contract.json   diffed against `config-schema --format contract`
-#   Dockerfile                  its LABEL block diffed against `--format dockerfile`, and it is
-#                               read by a Linux builder besides
-#   .github/scripts/*.sh        run by `bash` on a Linux runner
+# Auto-detect text files and normalize line endings to LF in the repository.
+* text=auto eol=lf
+
+# ----------------------------------------------------------------------------
+# Rust
+# ----------------------------------------------------------------------------
+*.rs text diff=rust
+Cargo.toml text diff=toml
+Cargo.lock text -diff linguist-generated merge=binary
+
+# ----------------------------------------------------------------------------
+# Fixtures compared byte-for-byte against generator output (see config-schema
+# and the Docker build): CRLF checkouts would break these comparisons on
+# Windows while `core.autocrlf` alone can't fix it, so LF is forced here.
+# ----------------------------------------------------------------------------
 /docs/config.contract.json text eol=lf
 /Dockerfile text eol=lf
-/.github/scripts/*.sh text eol=lf
+
+# ----------------------------------------------------------------------------
+# Scripts - must keep LF so they run under bash/sh in CI and containers.
+# ----------------------------------------------------------------------------
+*.sh text eol=lf
+*.bash text eol=lf
+
+# ----------------------------------------------------------------------------
+# Config / data formats
+# ----------------------------------------------------------------------------
+*.toml text diff=toml
+*.json text
+*.jsonc text
+*.yml text
+*.yaml text
+*.env text
+.env.example text
+.gitattributes text export-ignore
+.gitignore text export-ignore
+.dockerignore text export-ignore
+
+# ----------------------------------------------------------------------------
+# Documentation
+# ----------------------------------------------------------------------------
+*.md text diff=markdown
+*.mdx text diff=markdown
+*.txt text
+LICENSE text
+CHANGELOG.md text linguist-generated
+*.hbs text linguist-documentation
+
+# ----------------------------------------------------------------------------
+# Linguist overrides - keep GitHub's language stats and diffs focused on the
+# actual Rust source, not generated/vendored/lockfile content.
+# ----------------------------------------------------------------------------
+Cargo.lock linguist-generated
+.release-please-manifest.json linguist-generated
+release-please-config.json linguist-generated
+docs/config.contract.json linguist-generated
+docs/** linguist-documentation
+examples/** linguist-documentation
+
+# ----------------------------------------------------------------------------
+# Archive export - exclude development-only artifacts from `git archive`.
+# ----------------------------------------------------------------------------
+/.github export-ignore
+/tests export-ignore
+/.claude export-ignore
+/codecov.yml export-ignore
+/renovate.json export-ignore
+/justfile export-ignore
+
+# ----------------------------------------------------------------------------
+# Binary files - never touch line endings, never run text diffs.
+# ----------------------------------------------------------------------------
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg -text
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+
+# ----------------------------------------------------------------------------
+# Windows-specific scripts, if any are ever added, must keep CRLF.
+# ----------------------------------------------------------------------------
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
