@@ -323,7 +323,8 @@ jobs:
           pattern: sizes-*
           merge-multiple: true
 
-      - name: Comment image sizes on PR
+      - name: Build image size comment body
+        id: sizes_body
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         with:
           script: |
@@ -336,12 +337,14 @@ jobs:
                 return `| \`${platform}\` | ${size}MB |`;
               })
               .join('\n');
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🐳 **Docker image sizes**\n\n| Platform | Size |\n| --- | --- |\n${rows}`
-            });
+            core.setOutput('body', `🐳 **Docker image sizes**\n\n| Platform | Size |\n| --- | --- |\n${rows}`);
+
+      - name: Comment image sizes on PR
+        uses: TimSchoenle/actions/actions/common/upsert-pr-comment@30bc73a560c7aac65f449b23378b9fd7782f8d39 # tag=actions-common-upsert-pr-comment-v1.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          identifier: docker-image-size
+          body: ${{ steps.sizes_body.outputs.body }}
 
   dependency-review:
     name: Dependency Review
