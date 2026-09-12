@@ -128,7 +128,7 @@ jobs:
           persist-credentials: false
 
       - name: Install stable toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
 
       - name: Render the documentation
         run: cargo doc --all-features --no-deps
@@ -234,7 +234,7 @@ jobs:
       # the build wrote, which is what lets it also check the Dockerfile region and the
       # committed document in the same pass.
       - name: Install stable toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
         with:
           # This job publishes an image, and a restored cache is writable by any branch:
           # caching here would let a poisoned entry reach a runtime artefact. The only
